@@ -3,13 +3,20 @@ It brings less memory overhead, better memory locality and better performance.
 
 TO use it with maven:
 ```xml
-TODO snapshot repo:
+
+    <repositories>
+        <repository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
 
     <dependencies>
         <dependency>
             <groupId>org.mapdb</groupId>
             <artifactId>mapdb-longbtreemap</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 ```
@@ -17,6 +24,12 @@ TODO snapshot repo:
 And instantiate using following code.
 
 ```java
+
+    import org.mapdb.longbtreemap.*;
+    
+    DB db = DBMaker....;
+    
+    NavigableConcurrentMap<Long,Long> map = LongBTreeMapMaker.get(db,"mapName");
 
 
 ```
