@@ -30,7 +30,7 @@ public class LongBTreeMapTest {
     @Test public void test_leaf_node_serialization() throws IOException {
 
 
-        LongBTreeMap.LeafNode n = new LongBTreeMap.LeafNode(new Long[]{null,1L,2L,3L, null}, new Long[]{1L,2L,3L}, 111);
+        LongBTreeMap.LeafNode n = new LongBTreeMap.LeafNode(new long[]{ LongBTreeMap.NULL,1L,2L,3L, LongBTreeMap.NULL}, new long[]{1L,2L,3L}, 111);
         LongBTreeMap.LeafNode n2 = (LongBTreeMap.LeafNode) clone(n, m.nodeSerializer);
         assertArrayEquals(n.keys(), n2.keys());
         assertEquals(n.next, n2.next);
@@ -40,7 +40,7 @@ public class LongBTreeMapTest {
 	@Test public void test_dir_node_serialization() throws IOException {
 
 
-        LongBTreeMap.DirNode n = new LongBTreeMap.DirNode(new Long[]{1L,2L,3L, null}, new long[]{4,5,6,7});
+        LongBTreeMap.DirNode n = new LongBTreeMap.DirNode(new long[]{1L,2L,3L,  LongBTreeMap.NULL}, new long[]{4,5,6,7});
         LongBTreeMap.DirNode n2 = (LongBTreeMap.DirNode) clone(n, m.nodeSerializer);
 
         assertArrayEquals(n.keys(), n2.keys());
@@ -49,20 +49,20 @@ public class LongBTreeMapTest {
 
     @Test public void test_find_children(){
 
-        assertEquals(8,m.findChildren(11, new Integer[]{1,2,3,4,5,6,7,8}));
-        assertEquals(0,m.findChildren(1, new Integer[]{1,2,3,4,5,6,7,8}));
-        assertEquals(0,m.findChildren(0, new Integer[]{1,2,3,4,5,6,7,8}));
-        assertEquals(7,m.findChildren(8, new Integer[]{1,2,3,4,5,6,7,8}));
-        assertEquals(4,m.findChildren(49, new Integer[]{10,20,30,40,50}));
-        assertEquals(4,m.findChildren(50, new Integer[]{10,20,30,40,50}));
-        assertEquals(3,m.findChildren(40, new Integer[]{10,20,30,40,50}));
-        assertEquals(3,m.findChildren(39, new Integer[]{10,20,30,40,50}));
+        assertEquals(8,m.findChildren(11, new long[]{1,2,3,4,5,6,7,8}));
+        assertEquals(0,m.findChildren(1, new long[]{1,2,3,4,5,6,7,8}));
+        assertEquals(0,m.findChildren(0, new long[]{1,2,3,4,5,6,7,8}));
+        assertEquals(7,m.findChildren(8, new long[]{1,2,3,4,5,6,7,8}));
+        assertEquals(4,m.findChildren(49, new long[]{10,20,30,40,50}));
+        assertEquals(4,m.findChildren(50, new long[]{10,20,30,40,50}));
+        assertEquals(3,m.findChildren(40, new long[]{10,20,30,40,50}));
+        assertEquals(3,m.findChildren(39, new long[]{10,20,30,40,50}));
     }
 
 
     @Test public void test_next_dir(){
 
-        LongBTreeMap.DirNode d = new LongBTreeMap.DirNode(new Long[]{44L,62L,68L, 71L}, new long[]{10,20,30,40});
+        LongBTreeMap.DirNode d = new LongBTreeMap.DirNode(new long[]{44L,62L,68L, 71L}, new long[]{10,20,30,40});
 
         assertEquals(10, m.nextDir(d, 62L));
         assertEquals(10, m.nextDir(d, 44L));
@@ -83,14 +83,14 @@ public class LongBTreeMapTest {
     @Test public void test_next_dir_infinity(){
 
         LongBTreeMap.DirNode d = new LongBTreeMap.DirNode(
-                new Long[]{null,62L,68L, 71L},
+                new long[]{ LongBTreeMap.NULL,62L,68L, 71L},
                 new long[]{10,20,30,40});
         assertEquals(10L, m.nextDir(d, 33L));
         assertEquals(10L, m.nextDir(d, 62L));
         assertEquals(20L, m.nextDir(d, 63L));
 
         d = new LongBTreeMap.DirNode(
-                new Long[]{44L,62L,68L, null},
+                new long[]{44L,62L,68L,  LongBTreeMap.NULL},
                 new long[]{10,20,30,40});
 
         assertEquals(10L, m.nextDir(d, 62L));
@@ -113,8 +113,8 @@ public class LongBTreeMapTest {
     @Test public void simple_root_get(){
 
         LongBTreeMap.LeafNode l = new LongBTreeMap.LeafNode(
-                new Long[]{null, 10L,20L,30L, null},
-                new Long[]{10L,20L,30L},
+                new long[]{ LongBTreeMap.NULL, 10L,20L,30L,  LongBTreeMap.NULL},
+                new long[]{10L,20L,30L},
                 0);
         long rootRecid = engine.put(l, m.nodeSerializer);
         engine.update(m.rootRecidRef, rootRecid, Serializer.LONG);
@@ -136,8 +136,8 @@ public class LongBTreeMapTest {
         m.put(11L,12L);
         final long rootRecid = engine.get(m.rootRecidRef, Serializer.LONG);
         LongBTreeMap.LeafNode n = (LongBTreeMap.LeafNode) engine.get(rootRecid, m.nodeSerializer);
-        assertArrayEquals(new Object[]{null, 11L, null}, n.keys);
-        assertArrayEquals(new Object[]{12L}, n.vals);
+        assertArrayEquals(new long[]{ LongBTreeMap.NULL, 11L,  LongBTreeMap.NULL}, n.keys);
+        assertArrayEquals(new long[]{12L}, n.vals);
         assertEquals(0, n.next);
     }
 
