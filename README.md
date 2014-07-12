@@ -29,7 +29,6 @@ And instantiate using following code.
     
     DB db = DBMaker....;
     
-    NavigableConcurrentMap<Long,Long> map = LongBTreeMapMaker.get(db,"mapName");
-
+    ConcurrentNavigableMap<Long,Long> map = LongBTreeMapMaker.get(db,"mapName");
 
 ```
