@@ -1,7 +1,7 @@
 This library offers BTreeMap which uses primitive `long` as key. 
 It brings less memory overhead, better memory locality and better performance. 
 
-TO use it with maven:
+To use it with maven:
 ```xml
 
     <repositories>
@@ -32,3 +32,18 @@ And instantiate using following code.
     ConcurrentNavigableMap<Long,Long> map = LongBTreeMapMaker.get(db,"mapName");
 
 ```
+
+Long BTreeMap has 100% compatible format with following BTreeMap:
+
+```java
+
+    db.createTreeMap("map")
+        .keySerializer(BTreeKeySerializer.ZERO_OR_POSITIVE_LONG)
+        .valueSerializer(Serializer.LONG)
+        .make();
+        
+```
+
+So LongBTreeMap can be interchanged with BTreeMap, but MapDB store needs to be reopened before each swap
+
+LongBTreeMap is about 1.8x faster compared to BTreeMap
