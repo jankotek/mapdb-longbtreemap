@@ -348,24 +348,32 @@ public class LongBTreeMap extends AbstractMap<Long, Long>
 
 
             if(isLeaf){
-                long next = DataInput2.unpackLong(in);
-                long[] keys = longDeserialize(in, start,end,size);
-                assert(keys.length==size);
-                long[] vals = newLong(size-2);
-
-                for(int i=0;i<size-2;i++){
-                    vals[i] = in.readLong();
-                 }
-
-                return new LeafNode(keys, vals, next);
+                return readLeaf(in, size, start, end);
             }else{
-                long[] child = newLong(size);
-                for(int i=0;i<size;i++)
-                    child[i] = DataInput2.unpackLong(in);
-                long[] keys = longDeserialize(in, start,end,size);
-                assert(keys.length==size);
-                return new DirNode(keys, child);
+                return readDir(in, size, start, end);
             }
+        }
+
+        private BNode readDir(final DataInput in, final int size, final int start, final int end) throws IOException {
+            final long[] child = newLong(size);
+            for(int i=0;i<size;i++)
+                child[i] = DataInput2.unpackLong(in);
+            final long[] keys = longDeserialize(in, start,end,size);
+            assert(keys.length==size);
+            return new DirNode(keys, child);
+        }
+
+        private BNode readLeaf(final DataInput in, final int size, final int start, final int end) throws IOException {
+            final long next = DataInput2.unpackLong(in);
+            final long[] keys = longDeserialize(in, start,end,size);
+            assert(keys.length==size);
+            final long[] vals = newLong(size-2);
+
+            for(int i=0;i<size-2;i++){
+                vals[i] = in.readLong();
+             }
+
+            return new LeafNode(keys, vals, next);
         }
 
         @Override
