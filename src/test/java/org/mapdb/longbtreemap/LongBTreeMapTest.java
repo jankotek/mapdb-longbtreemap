@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mapdb.*;
 
+import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -404,6 +405,37 @@ public class LongBTreeMapTest {
             throw new IOError(ee);
         }
     }
+
+    @Test public void reopen_treeMap() throws IOException {
+        File f = File.createTempFile("mapdb","mapdb");
+        DB db = DBMaker.newFileDB(f).transactionDisable().make();
+        Map m = db.createTreeMap("map")
+                .keySerializer(BTreeKeySerializer.ZERO_OR_POSITIVE_LONG)
+                .valueSerializer(Serializer.LONG)
+                .make();
+        m.put(11L,22L);
+
+        db.close();
+        db = DBMaker.newFileDB(f).transactionDisable().make();
+        m = LongBTreeMapMaker.get(db,"map");
+        assertEquals(22L, m.get(11L));
+        db.close();
+    }
+
+
+    @Test public void reopen_treeMap2() throws IOException {
+        File f = File.createTempFile("mapdb","mapdb");
+        DB db = DBMaker.newFileDB(f).transactionDisable().make();
+        Map m = LongBTreeMapMaker.get(db,"map");
+        m.put(11L,22L);
+
+        db.close();
+        db = DBMaker.newFileDB(f).transactionDisable().make();
+        m = db.getTreeMap("map");
+        assertEquals(22L, m.get(11L));
+        db.close();
+    }
+
 
 }
 

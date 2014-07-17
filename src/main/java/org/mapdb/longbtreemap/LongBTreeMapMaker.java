@@ -26,7 +26,15 @@ public class LongBTreeMapMaker {
                 return create(db, name);
 
             }
-            db.checkType(type, "LongBTreeMap");
+            db.checkType(type, "TreeMap");
+
+
+            if(db.catGet(name+".keySerializer",null)!=BTreeKeySerializer.ZERO_OR_POSITIVE_LONG){
+                throw new IllegalArgumentException("TreeMap key serializer must be ZERO_OR_POSITIVE_LONG");
+            }
+            if(db.catGet(name+".valueSerializer",null)!=Serializer.LONG){
+                throw new IllegalArgumentException("TreeMap value serializer must be ");
+            }
 
             ret = new LongBTreeMap(db.getEngine(),
                     (Long) db.catGet(name + ".rootRecidRef"),
@@ -54,6 +62,9 @@ public class LongBTreeMapMaker {
             long rootRecidRef;
             rootRecidRef = LongBTreeMap.createRootRef(db.getEngine(), 0);
 
+            db.catPut(name+".keySerializer",BTreeKeySerializer.ZERO_OR_POSITIVE_LONG);
+            db.catPut(name+".valueSerializer",Serializer.LONG);
+
             LongBTreeMap ret = new LongBTreeMap(db.getEngine(),
                     db.catPut(name + ".rootRecidRef", rootRecidRef),
                     db.catPut(name + ".maxNodeSize", maxNodeSize),
@@ -61,7 +72,7 @@ public class LongBTreeMapMaker {
                     db.catPut(name + ".numberOfNodeMetas", 0),
                     false
             );
-            db.catPut(name + ".type", "LongBTreeMap");
+            db.catPut(name + ".type", "TreeMap");
             db.namedPut(name, ret);
             return ret;
         }
