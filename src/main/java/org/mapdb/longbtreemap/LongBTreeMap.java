@@ -577,7 +577,7 @@ public class LongBTreeMap extends AbstractMap<Long, Long>
                 int pos = findChildren(v, A.keys());
                 //check if keys is already in tree
                 if(pos<A.keys().length-1 &&  v!=NULL && A.keys()[pos]!=NULL &&
-                        0==compare(v,A.keys()[pos])){
+                        v==A.keys()[pos]){
                     //yes key is already in tree
                     Long oldVal = A.vals()[pos-1];
                     if(putOnlyIfAbsent){
@@ -602,7 +602,7 @@ public class LongBTreeMap extends AbstractMap<Long, Long>
                 }
 
                 //if v > highvalue(a)
-                if(A.highKey() != NULL && compare(v, A.highKey())>0){
+                if(A.highKey() != NULL && v> A.highKey()){
                     //follow link until necessary
                     unlock(nodeLocks, current);
                     found = false;
@@ -853,7 +853,7 @@ public class LongBTreeMap extends AbstractMap<Long, Long>
             A = engine.get(current, nodeSerializer);
             int pos = findChildren(key, A.keys());
             if(pos<A.keys().length&& key!=null && A.keys()[pos]!=NULL &&
-                    0==compare(key,A.keys()[pos])){
+                    key == A.keys()[pos]){
                 //check for last node which was already deleted
                 if(pos == A.keys().length-1 && value == null){
                     unlock(nodeLocks, current);
@@ -886,7 +886,7 @@ public class LongBTreeMap extends AbstractMap<Long, Long>
             }else{
                 unlock(nodeLocks, current);
                 //follow link until necessary
-                if(A.highKey() != NULL && compare(key, A.highKey())>0){
+                if(A.highKey() != NULL && key > A.highKey()){
                     int pos2 = findChildren(key, A.keys());
                     while(pos2 == A.keys().length){
                         //TODO lock?
@@ -2919,6 +2919,7 @@ public class LongBTreeMap extends AbstractMap<Long, Long>
     }
 
 
+    //TODO replace this method with <>
     protected static int compare(long o1, long o2) {
         if(o1 == NULL)
             return o2 == NULL?0:-1;
